@@ -1,24 +1,98 @@
+"""
+Ontology parser module for Turtle (TTL) format files.
+
+Provides functionality for parsing and normalizing ontology files with:
+- Namespace management
+- Class hierarchy generation
+- Syntax normalization
+- Cross-referencing between classes
+
+Key Components:
+1. BaseParser: Abstract base class for parser implementations
+2. TTLParser: Concrete implementation for Turtle format processing
+
+Features:
+- Automatic namespace injection for class URIs
+- Parent-child relationship detection
+- Multi-language label support
+- Syntax validation and normalization
+- Output generation of modified TTL files
+
+Typical Workflow:
+1. Normalize class URIs with specified namespace
+2. Generate modified TTL file with full URIs
+3. Parse normalized file into hierarchical structure
+4. Build parent-child relationships map
+
+Dependencies:
+- pathlib: Path handling
+- re: Regular expression matching
+
+File Operations:
+- Creates *_pretty.ttl files with normalized syntax
+- Maintains original file encoding (UTF-8 assumed)
+
+Data Structures:
+- Returns nested dictionaries with format:
+    {
+        'ClassName': {
+            'title': str,
+            'parent': Optional[str],
+            'children': Optional[List[str]],
+            'label@{lang}': str
+        }
+    }
+"""
 import pathlib
 import re
 
 
 class BaseParser:
+    """Base class for ontology parser implementations."""
+
     def __init__(self):
+        """Initialize base parser instance."""
         pass
 
     def __call__(self, path, **kwargs):
-        pass
+        """Parse ontology file (to be implemented by subclasses).
+
+        Args:
+            path: Path to ontology file
+            **kwargs: Implementation-specific arguments
+
+        Raises:
+            NotImplementedError: Always raises for base class
+        """
+        raise NotImplementedError('Subclasses must implement __call__')
 
     def __str__(self):
+        """Return string representation of parser class."""
         return self.__class__.__name__
 
 
 class TTLParser(BaseParser):
+    """Turtle format ontology parser with namespace normalization."""
+
     def __init__(self):
+        """Initialize TTL parser instance."""
         super().__init__()
 
     @staticmethod
-    def __rename_classes(path: str, namespace: str):
+    def __rename_classes(path: str, namespace: str) -> str:
+        """Normalize class names and update ontology file.
+
+        Args:
+            path: Path to original ontology file
+            namespace: Namespace URI for class normalization
+
+        Returns:
+            str: Path to generated normalized ontology file
+
+        Raises:
+            FileNotFoundError: If input path doesn't exist or isn't a file
+            Exception: For unsupported syntax patterns
+        """
         old_new = {}
         classes = []
         new_file = []
@@ -26,7 +100,7 @@ class TTLParser(BaseParser):
         if not path.exists():
             raise FileNotFoundError('Path does not exist')
         elif not path.is_file():
-            raise FileNotFoundError('Path dose not a file')
+            raise FileNotFoundError('Path is not a file')
 
         with open(path, 'r') as f:
             while line := f.readline():
@@ -60,6 +134,23 @@ class TTLParser(BaseParser):
 
     @staticmethod
     def __parser_ttl(path: str) -> dict[str, dict[str, str | list[str]]]:
+        """Parse normalized TTL file into hierarchical structure.
+
+        Args:
+            path: Path to normalized ontology file
+
+        Returns:
+            dict: Hierarchical structure of ontology classes with:
+                - Keys: Class names
+                - Values: Dictionaries containing:
+                    - title: Class name
+                    - parent: Parent class name (optional)
+                    - children: List of child classes (optional)
+                    - label@{lang}: Localized labels (optional)
+
+        Raises:
+            Exception: For unsupported syntax patterns
+        """
         parent_children = {}
         classes = {}
         with open(path, 'r') as f:
@@ -95,14 +186,20 @@ class TTLParser(BaseParser):
         return classes
 
     def __call__(self, path, **kwargs):
+        """Execute full parsing workflow.
+
+        Args:
+            path: Path to original ontology file
+            **kwargs: Must contain 'namespace' argument
+
+        Returns:
+            dict: Parsed hierarchical structure
+
+        Raises:
+            AttributeError: If namespace not provided
+        """
         namespace = kwargs.get('namespace', None)
         if namespace is None:
             raise AttributeError('Namespace must be specified')
 
         return self.__parser_ttl(self.__rename_classes(path, namespace))
-
-
-if __name__ == '__main__':
-    TTLParser()('./data/ontology.ttl',
-                namespace='http://www.semanticweb.org/григорий/ontologies/2024/10/untitled-ontology-19')
-"""./data/ontology.ttl namespace=http://www.semanticweb.org/григорий/ontologies/2024/10/untitled-ontology-19"""

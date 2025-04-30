@@ -7,6 +7,7 @@ name = "pypi"
 requests = "*"
 dotenv = "*"
 tqdm = "*"
+colorama = "*"
 
 [dev-packages]
 flake8-docstrings = "*"
