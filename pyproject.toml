@@ -12,3 +12,9 @@ per-file-ignores = [
     "onto2wiki/exceptions.py: D100 D101",
     "onto2wiki/utils.py: D100"
 ]
+
+[pytest]
+testpaths = "tests"  # Где искать тесты
+python_files = "*_test.py"  # Шаблон названий файлов
+python_classes = "Test*"  # Шаблон названий классов
+python_functions = "test_*"  # Шаблон названий функций

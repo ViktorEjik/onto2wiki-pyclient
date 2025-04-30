@@ -19,6 +19,8 @@ flake8-comprehensions = "*"
 flake8 = "*"
 flake8-pyproject = "*"
 isort = "*"
+pytest = "*"
+pytest-mock = "*"
 
 [requires]
 python_version = "3.13"
