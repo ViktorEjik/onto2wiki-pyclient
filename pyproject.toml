@@ -1,0 +1,10 @@
+[tool.flake8]
+ignore = ["ANN", "D"]
+max-line-length = 120
+exclude = [
+    ".git",
+    "__pycache__",
+    ".venv",
+    "migrations",
+    "tmp.py"
+]

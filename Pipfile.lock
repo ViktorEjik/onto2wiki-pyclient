@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "af66c5941c7ae65d8add2a2a20dd84304b70a92fddf83d060694256e8c2d738f"
+            "sha256": "be7740e0fae2bddc723801c7c865bb54455550535e003a520bb30ae645454af7"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -187,6 +187,7 @@
                 "sha256:93b92ba5bdb60754a6da14fa3b93a9361fd00a59632ada61fd7b130436c40343",
                 "sha256:fa558ae3f6f7dbf2b4f22663e5343b6b6023620461f8d4ff2019ef4b5ee70426"
             ],
+            "index": "pypi",
             "markers": "python_version >= '3.9'",
             "version": "==7.2.0"
         },
@@ -234,12 +235,29 @@
             "index": "pypi",
             "version": "==0.18.2"
         },
+        "flake8-pyproject": {
+            "hashes": [
+                "sha256:6249fe53545205af5e76837644dc80b4c10037e73a0e5db87ff562d75fb5bd4a"
+            ],
+            "index": "pypi",
+            "markers": "python_version >= '3.6'",
+            "version": "==1.2.3"
+        },
         "flake8-quotes": {
             "hashes": [
                 "sha256:aad8492fb710a2d3eabe68c5f86a1428de650c8484127e14c43d0504ba30276c"
             ],
             "index": "pypi",
             "version": "==3.4.0"
+        },
+        "isort": {
+            "hashes": [
+                "sha256:1cb5df28dfbc742e490c5e41bad6da41b805b0a8be7bc93cd0fb2a8a890ac450",
+                "sha256:2dc5d7f65c9678d94c88dfc29161a320eec67328bc97aad576874cb4be1e9615"
+            ],
+            "index": "pypi",
+            "markers": "python_full_version >= '3.9.0'",
+            "version": "==6.0.1"
         },
         "mccabe": {
             "hashes": [
@@ -275,11 +293,11 @@
         },
         "setuptools": {
             "hashes": [
-                "sha256:18fd474d4a82a5f83dac888df697af65afa82dec7323d09c3e37d1f14288da54",
-                "sha256:3e386e96793c8702ae83d17b853fb93d3e09ef82ec62722e61da5cd22376dcd8"
+                "sha256:20fe373a22ef9f3925512650d1db90b1b8de01cdb6df91ab1788263139cbf9a2",
+                "sha256:f4b49d457765b3aae7cbbeb1c71f6633a61b729408c2d1a837dae064cca82ef2"
             ],
             "markers": "python_version >= '3.9'",
-            "version": "==78.1.0"
+            "version": "==80.0.1"
         },
         "snowballstemmer": {
             "hashes": [

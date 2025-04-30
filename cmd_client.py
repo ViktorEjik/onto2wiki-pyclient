@@ -1,16 +1,18 @@
 import cmd
-from tqdm import  tqdm
-from pprint import pprint
 import shlex
 from importlib import import_module
-from requests import exceptions
-
 from parser import TTLParser
+
+from tqdm import tqdm
+
 from utils import find_roots
+
 from web_client import Onto2WikiClient
+
 
 class CMDClient(cmd.Cmd):
     prompt = 'o2WiKi %-> '
+
     def __init__(self):
         super().__init__()
         self.client = Onto2WikiClient()
@@ -46,7 +48,6 @@ class CMDClient(cmd.Cmd):
         except Exception as e:
             print(f'Can`t add parser {parse_name}. Error: {e}')
 
-
     def do_list_parsers(self, arg):
         print(' ', *map(str, self.parsers.keys()))
 
@@ -70,8 +71,7 @@ class CMDClient(cmd.Cmd):
         try:
             self.client.login()
         except Exception as e:
-            print(f'Can`t login to {self.client.config['URL_API']}. Error: {e}')
-
+            print(f'Can`t login to {self.client.config["URL_API"]}. Error: {e}')
 
     def do_create_pages(self, args):
         pages = shlex.split(args)
@@ -118,13 +118,13 @@ class CMDClient(cmd.Cmd):
         self.do_remove_pages(args)
         self.do_remove_hierarchy_pages(args)
 
-
     def do_modify_main_pages(self, args):
         self.client.modify_main_page(args, self.roots, '. Иерархия тем')
 
     @staticmethod
     def do_exit(arg):
         return True
+
 
 if __name__ == '__main__':
     CMDClient().cmdloop()
