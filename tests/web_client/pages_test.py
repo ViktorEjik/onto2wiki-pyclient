@@ -10,19 +10,19 @@ def login_client():
         'URL_API': 'https://wiki.example.org/api.php',
         'LOGIN': 'testuser',
         'PASSWORD': 'testpass',
-        "csrftoken": 'testcsrftoken',
+        'csrftoken': 'testcsrftoken',
     }
 
     return client
 
 def test_add_new_page_success(login_client, mocker):
-    """Проверка успешного создания страницы с основным контентом"""
+    
     mock_post = mocker.patch('requests.Session.post')
-    mock_post.return_value = Mock(json=lambda: {"edit": {"result": "Success"}})
+    mock_post.return_value = Mock(json=lambda: {'edit': {'result': 'Success'}})
 
     test_page = {
-        "title": "Test_Page",
-        "text": "Initial content"
+        'title': 'Test_Page',
+        'text': 'Initial content'
     }
 
     result = login_client.add_new_page(test_page)
@@ -47,13 +47,13 @@ def test_add_new_page_success(login_client, mocker):
 
 
 def test_add_new_page_with_children(login_client, mocker):
-    """Проверка создания разделов для дочерних страниц"""
+    
     mock_post = mocker.patch('requests.Session.post')
-    mock_post.return_value = Mock(json=lambda: {"edit": {"result": "Success"}})
+    mock_post.return_value = Mock(json=lambda: {'edit': {'result': 'Success'}})
 
     test_page = {
-        "title": "Parent_Page",
-        "children": ["Child_1", "Child_2"]
+        'title': 'Parent_Page',
+        'children': ['Child_1', 'Child_2']
     }
 
     login_client.add_new_page(test_page)
@@ -79,13 +79,13 @@ def test_add_new_page_with_children(login_client, mocker):
 
 
 def test_add_new_page_with_parent(login_client, mocker):
-    """Проверка создания раздела для родительской страницы"""
+    
     mock_post = mocker.patch('requests.Session.post')
-    mock_post.return_value = Mock(json=lambda: {"edit": {"result": "Success"}})
+    mock_post.return_value = Mock(json=lambda: {'edit': {'result': 'Success'}})
 
     test_page = {
-        "title": "Child_Page",
-        "parent": "Parent_Page"
+        'title': 'Child_Page',
+        'parent': 'Parent_Page'
     }
 
     login_client.add_new_page(test_page)
@@ -110,14 +110,14 @@ def test_add_new_page_with_parent(login_client, mocker):
 
 
 def test_add_new_page_error_handling(login_client, mocker):
-    """Проверка обработки ошибки API"""
+    
     mock_post = mocker.patch('requests.Session.post')
     mock_post.return_value = Mock(
-        json=lambda: {"error": {"code": "protectedpage", "info": "Page is protected"}},
+        json=lambda: {'error': {'code': 'protectedpage', 'info': 'Page is protected'}},
         status_code=403
     )
 
-    test_page = {"title": "Protected_Page"}
+    test_page = {'title': 'Protected_Page'}
 
     result = login_client.add_new_page(test_page)
 
@@ -125,11 +125,11 @@ def test_add_new_page_error_handling(login_client, mocker):
 
 
 def test_dell_page_success(login_client, mocker):
-    """Проверка успешного удаления страницы"""
+    
     mock_post = mocker.patch('requests.Session.post')
     mock_post.return_value = Mock(json=lambda: {}, status_code=200)
 
-    test_page = {"title": "Test_Page"}
+    test_page = {'title': 'Test_Page'}
 
     login_client.dell_page(test_page)
 
@@ -149,7 +149,7 @@ def test_dell_page_success(login_client, mocker):
 
 
 def test_empty_page_handling(login_client, mocker):
-    """Проверка обработки пустой страницы"""
+    
     mock_post = mocker.patch('requests.Session.post')
 
     login_client.dell_page({})

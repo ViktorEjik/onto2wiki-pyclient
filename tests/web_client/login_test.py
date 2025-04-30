@@ -14,7 +14,7 @@ def unregistered_client():
     return client
 
 def test_login_headers_and_params(unregistered_client, mocker):
-    """Проверка двух GET-запросов при успешной авторизации"""
+    
     # Мокаем методы запросов
     mock_get = mocker.patch('requests.Session.get')
     mock_post = mocker.patch('requests.Session.post')

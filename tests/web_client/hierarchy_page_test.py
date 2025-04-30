@@ -11,30 +11,30 @@ def login_client():
         'URL_API': 'https://wiki.example.org/api.php',
         'LOGIN': 'testuser',
         'PASSWORD': 'testpass',
-        "csrftoken": 'testcsrftoken',
+        'csrftoken': 'testcsrftoken',
     }
 
     return client
 
 
 def test_add_hierarchy_page_success(login_client, mocker):
-    """Проверка успешного создания страниц иерархии"""
+    
     # Мокаем зависимость
     mock_post = mocker.patch('requests.Session.post')
     mock_post.return_value = Mock(
-        json=lambda: {"edit": {"result": "Success"}},
+        json=lambda: {'edit': {'result': 'Success'}},
         status_code=200
     )
 
     # Тестовые данные
     test_pages = {
-        "RootPage": {"children": ["ChildPage"]},
-        "ChildPage": {"parent": "RootPage"}
+        'RootPage': {'children': ['ChildPage']},
+        'ChildPage': {'parent': 'RootPage'}
     }
-    test_roots = ["RootPage"]
+    test_roots = ['RootPage']
 
     # Вызываем тестируемый метод
-    login_client.add_hierarchy_page(".Hierarchy", test_pages, test_roots)
+    login_client.add_hierarchy_page('.Hierarchy', test_pages, test_roots)
 
     # Проверяем параметры запроса
     expected_data = {
@@ -55,49 +55,49 @@ def test_add_hierarchy_page_success(login_client, mocker):
 
 
 def test_multiple_roots_processing(login_client, mocker):
-    """Проверка обработки нескольких корневых элементов"""
+    
     mock_post = mocker.patch('requests.Session.post')
-    mock_post.return_value = Mock(json=lambda: {"edit": {"result": "Success"}})
+    mock_post.return_value = Mock(json=lambda: {'edit': {'result': 'Success'}})
 
     test_data = {
-        "pages": {
-            "Root1": {"children": ["Child1"]},
+        'pages': {
+            'Root1': {'children': ['Child1']},
             'Child1': {'parent': 'Root1'},
-            "Root2": {"children": ["Child2"]},
+            'Root2': {'children': ['Child2']},
             'Child2': {'parent': 'Root2'},
         },
-        "roots": ["Root1", "Root2"]
+        'roots': ['Root1', 'Root2']
     }
 
-    login_client.add_hierarchy_page(".Hierarchy", test_data["pages"], test_data["roots"])
+    login_client.add_hierarchy_page('.Hierarchy', test_data['pages'], test_data['roots'])
 
     assert mock_post.call_count == 2
     called_titles = {call[1]['data']['title'] for call in mock_post.call_args_list}
-    assert called_titles == {"Root1.Hierarchy", "Root2.Hierarchy"}
+    assert called_titles == {'Root1.Hierarchy', 'Root2.Hierarchy'}
 
 
-@pytest.mark.parametrize("input_title, expected", [
-    ("Test_Page", "Test Page.Hierarchy"),
-    ("Another_Example", "Another Example.Hierarchy"),
-    ("NoSpacesHere", "NoSpacesHere.Hierarchy")
+@pytest.mark.parametrize('input_title, expected', [
+    ('Test_Page', 'Test Page.Hierarchy'),
+    ('Another_Example', 'Another Example.Hierarchy'),
+    ('NoSpacesHere', 'NoSpacesHere.Hierarchy')
 ])
 def test_title_generation(login_client, mocker, input_title, expected):
-    """Параметризованный тест генерации заголовков"""
+    
     mocker.patch('requests.Session.post')
 
-    login_client.add_hierarchy_page(".Hierarchy", {input_title: {}}, [input_title])
+    login_client.add_hierarchy_page('.Hierarchy', {input_title: {}}, [input_title])
 
     _, kwargs = requests.Session.post.call_args
     assert kwargs['data']['title'] == expected
 
 
 def test_delete_hierarchy_page_success(login_client, mocker):
-    """Проверка успешного удаления страниц иерархии"""
+    
     mock_post = mocker.patch('requests.Session.post')
     mock_post.return_value = Mock(json=lambda: {}, status_code=200)
 
-    test_roots = ["RootPage", "AnotherRoot"]
-    login_client.delete_hierarchy_page(".Hierarchy", test_roots)
+    test_roots = ['RootPage', 'AnotherRoot']
+    login_client.delete_hierarchy_page('.Hierarchy', test_roots)
 
     assert mock_post.call_count == 2
     expected_calls = [
@@ -130,23 +130,23 @@ def test_delete_hierarchy_page_success(login_client, mocker):
 
 
 def test_delete_hierarchy_page_error(login_client, mocker):
-    """Проверка обработки ошибки при удалении"""
+    
     mock_post = mocker.patch('requests.Session.post')
     mock_post.return_value = Mock(
-        json=lambda: {"error": {"code": "missingtitle", "info": "Page does not exist"}},
+        json=lambda: {'error': {'code': 'missingtitle', 'info': 'Page does not exist'}},
         status_code=404
     )
 
-    login_client.delete_hierarchy_page(".Hierarchy", ["NonExistingPage"])
+    login_client.delete_hierarchy_page('.Hierarchy', ['NonExistingPage'])
 
 
-@pytest.mark.parametrize("input_title, postfix, expected", [
-    ("Test_Page", ".Hierarchy", "Test Page.Hierarchy"),
-    ("Snake_Case_Example", "_test", "Snake Case Example_test"),
-    ("NoSpaces", "", "NoSpaces")
+@pytest.mark.parametrize('input_title, postfix, expected', [
+    ('Test_Page', '.Hierarchy', 'Test Page.Hierarchy'),
+    ('Snake_Case_Example', '_test', 'Snake Case Example_test'),
+    ('NoSpaces', '', 'NoSpaces')
 ])
 def test_title_generation(login_client, mocker, input_title, postfix, expected):
-    """Параметризованный тест генерации заголовков"""
+    
     mock_post = mocker.patch('requests.Session.post')
 
     login_client.delete_hierarchy_page(postfix, [input_title])
@@ -156,9 +156,9 @@ def test_title_generation(login_client, mocker, input_title, postfix, expected):
 
 
 def test_empty_roots(login_client, mocker):
-    """Проверка обработки пустого списка корней"""
+    
     mock_post = mocker.patch('requests.Session.post')
 
-    login_client.delete_hierarchy_page(".Hierarchy", [])
+    login_client.delete_hierarchy_page('.Hierarchy', [])
 
     mock_post.assert_not_called()
