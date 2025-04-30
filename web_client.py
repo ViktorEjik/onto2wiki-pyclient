@@ -1,8 +1,16 @@
+from itertools import count
+import logging
+from logging.handlers import RotatingFileHandler
+from sys import prefix
+
 from requests import Session
 from dotenv import dotenv_values
+import os
+
 
 from parser import BaseParser, TTLParser
 from utils import find_roots
+from exeptions import LoginException
 
 class Onto2WikiClient(Session):
 
@@ -32,6 +40,23 @@ class Onto2WikiClient(Session):
             'Accept': '*/*',
             'Connection': 'keep-alive',
         }
+
+        formatter = logging.Formatter(
+            fmt="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+            datefmt="%Y-%m-%d %H:%M:%S"
+        )
+        file_handler = RotatingFileHandler(
+            filename= os.getcwd() + "/" + self.__class__.__name__ + ".log",
+            maxBytes=1024 * 1024,  # 1 MB
+            backupCount=3,
+            encoding="utf-8"
+        )
+        file_handler.setFormatter(formatter)
+        file_handler.setLevel(logging.DEBUG)
+        self.__logger = logging.getLogger(self.__class__.__name__)
+        self.__logger.addHandler(file_handler)
+        self.__logger.setLevel(logging.DEBUG)
+
         self.__parser = parser
         self.__config = dotenv_values(dotenv_path)
 
@@ -42,7 +67,11 @@ class Onto2WikiClient(Session):
             "type": "login|csrf",
             'format':"json"
         }
-        req = self.get(url=self.config['URL_API'], params=params, headers=self.headers)
+        try:
+            req = self.get(url=self.config['URL_API'], params=params, headers=self.headers)
+        except Exception as e:
+            self.__logger.error(e)
+            raise e
         self.config.update(req.json()['query']['tokens'])
 
         if "LOGIN" in self.config and "PASSWORD" in self.config:
@@ -53,15 +82,25 @@ class Onto2WikiClient(Session):
                 'lgtoken': self.config['logintoken'],
                 'format': "json"
             }
-            req = self.post(self.config['URL_API'], data=log_params, headers=self.headers).json()
+            try:
+                req = self.post(self.config['URL_API'], data=log_params, headers=self.headers).json()
+            except Exception as e:
+                self.__logger.error(e)
+                raise e
+
             if req['login']['result'].lower() != 'success':
-                raise Exception("Login failed: " + req['login']['reason'])
+                self.__logger.error(f'Can`t login to {self.config['URL_API']} with {self.config["LOGIN"]}')
+                raise LoginException("Login failed: " + req['login']['reason'])
+
+            self.__logger.debug(f'Connected to {self.config['URL_API']} with name {self.config["LOGIN"]}')
+
             self.config.update({'lgusername': req['login']['lgusername']})
             req = self.get(url=self.config['URL_API'], params=params, headers=self.headers)
-            print(req.text)
             self.config.update(req.json()['query']['tokens'])
-            print(self.config)
-        else: raise Exception("Login failed")
+
+        else:
+            self.__logger.error("Unspecified login or password.")
+            raise LoginException("Unspecified login or password.")
 
     def get_hierarchy_page(self, pages, me, visited, i):
         text = f'{"*" * i} [[{' '.join(me.split('_'))}]]\n'
@@ -87,7 +126,10 @@ class Onto2WikiClient(Session):
                 "formatversion": "2"
             }
             req = self.post(url=self.config['URL_API'], data=params, headers=self.headers).json()
-            print(req)
+            if 'error' in req:
+                self.__logger.error(f'Can`t create page {params['title']}: {req["error"]["info"]}')
+            if req['edit']['result'].lower() == 'success':
+                self.__logger.debug(f'Created page {params['title']}')
 
     def delete_hierarchy_page(self, postfix: str, roots):
         for root in roots:
@@ -100,10 +142,13 @@ class Onto2WikiClient(Session):
                 "formatversion": "2"
             }
             req = self.post(url=self.config['URL_API'], data=params, headers=self.headers).json()
-            print(req)
+            if 'error' in req:
+                self.__logger.error(f'Can`t delete page {params["title"]}: {req["error"]["info"]}')
+            else:
+                self.__logger.debug(f'Deleted page {params["title"]}')
 
-    def add_new_page(self, page):
-
+    def add_new_page(self, page) -> bool:
+        added_flag = False
         text = page.get('text', '')
         params = {
             "action": "edit",
@@ -115,7 +160,13 @@ class Onto2WikiClient(Session):
             "formatversion": "2"
         }
         req = self.post(url=self.config['URL_API'], data=params, headers=self.headers).json()
-        print(req)
+        if 'error' in req:
+            self.__logger.error(f'Can`t create page {params["title"]}: {req["error"]["info"]}')
+        else:
+            added_flag = req['edit']['result'].lower() == 'success'
+
+        if added_flag:
+            self.__logger.debug(f'Created page {params["title"]}')
 
         if 'children' in page:
             childrens = ''
@@ -133,7 +184,8 @@ class Onto2WikiClient(Session):
                 "formatversion": "2"
             }
             req = self.post(url=self.config['URL_API'], data=params, headers=self.headers).json()
-            print(req)
+            if 'error' in req:
+                self.__logger.error(f'Can`t create page {params["title"]}: {req["error"]["info"]}')
 
         if 'parent' in page:
             params = {
@@ -147,7 +199,10 @@ class Onto2WikiClient(Session):
                 "formatversion": "2"
             }
             req = self.post(url=self.config['URL_API'], data=params, headers=self.headers).json()
-            print(req)
+            if 'error' in req:
+                self.__logger.error(f'Can`t create page {params["title"]}: {req["error"]["info"]}')
+
+        return added_flag
 
     def dell_page(self, page):
         params = {
@@ -158,7 +213,10 @@ class Onto2WikiClient(Session):
             "formatversion": "2"
         }
         req = self.post(url=self.config['URL_API'], data=params, headers=self.headers).json()
-        print(req)
+        if 'error' in req:
+            self.__logger.error(f'Can`t delete page {params["title"]}: {req["error"]["info"]}')
+        else:
+            self.__logger.debug(f'Deleted page {params["title"]}')
 
     def modify_main_page(self, main_page, roots, postfix):
         parse_params = {
@@ -169,8 +227,9 @@ class Onto2WikiClient(Session):
         }
 
         req = self.post(url=self.config['URL_API'], data=parse_params, headers=self.headers).json()
-        # pprint(req)
+
         if 'error' in req:
+            self.__logger.error(f'Can`t create page {main_page}: {req["error"]["info"]}')
             raise Exception(f'Can`t parse {main_page}: {req["error"]["info"]}')
         sections = req['parse']['sections']
         params = {
@@ -189,13 +248,14 @@ class Onto2WikiClient(Session):
                                              "bot": 1,
                                              "token": self.config['csrftoken']},
                                 headers=self.headers).json()
-                print(req)
-            elif len(root_section) == 1:
-                print('Section exists')
-            else:
-                raise Exception("Find more then 1 section named " + root + " иерархия тем")
-        # req = self.post(url=self.config['URL_API'], data=params, headers=self.headers).json()
-        # print(req)
+                if 'error' in req:
+                    self.__logger.error(f'Can`t modify page {main_page}: {req["error"]["info"]}')
+                else:
+                    self.__logger.debug(f'Modified page {main_page}')
+            elif len(root_section) > 1:
+                self.__logger.error(f'Find more then 1 section named {root + prefix}')
+                raise Exception("Find more then 1 section named " + root + prefix)
+
 
 
     def __call__(self, ontology_path, main_page):
