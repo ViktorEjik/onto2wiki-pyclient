@@ -1,11 +1,10 @@
 import re
-import sys
 import pathlib
 
 class BaseParser:
     def __init__(self):
         pass
-    def __call__(self, path, *args, **kwargs):
+    def __call__(self, path, **kwargs):
         pass
 
     def __str__(self):
@@ -88,7 +87,7 @@ class TTLParser(BaseParser):
             classes[parent].update({'children': children})
         return classes
 
-    def __call__(self, path, *args, **kwargs):
+    def __call__(self, path, **kwargs):
         namespace = kwargs.get('namespace', None)
         if namespace is None:
             raise AttributeError('Namespace must be specified')
@@ -97,3 +96,4 @@ class TTLParser(BaseParser):
 
 if __name__ == '__main__':
     TTLParser()('./data/ontology.ttl', namespace='http://www.semanticweb.org/григорий/ontologies/2024/10/untitled-ontology-19')
+'''./data/ontology.ttl namespace=http://www.semanticweb.org/григорий/ontologies/2024/10/untitled-ontology-19'''
