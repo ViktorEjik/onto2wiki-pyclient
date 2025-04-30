@@ -1,38 +1,43 @@
 """
 Wiki API client for ontology-based content management.
 
-This module provides the Onto2WikiClient class for automated interaction with a wiki
-website's API. It handles ontology processing, page hierarchy generation, and bulk
-content operations while maintaining session state.
+This module provides the Onto2WikiClient class for automated interaction with a wiki website's API.
+It handles ontology processing, page hierarchy generation, and bulk content operations while maintaining session state.
 
-Key Features:
+**Key Features:**
+
 - Session management with persistent connections
 - Ontology parsing and transformation to wiki content
 - Automated page creation/deletion with hierarchy support
 - Configuration through environment variables
 - Integrated logging with rotation
 
-Dependencies:
-- requests: HTTP session management
-- python-dotenv: Environment configuration
-- logging: Activity tracking and debugging
+**Dependencies:**
 
-Example Usage:
-    from web_client import Onto2WikiClient
+- ``requests``: HTTP session management
+- ``python-dotenv``: Environment configuration
+- ``logging``: Activity tracking and debugging
 
-    client = Onto2WikiClient(dotenv_path="config.env")
-    client("ontology.ttl", "Main_Page")
+**Example Usage:**
 
-The client implements a full workflow:
+.. code-block:: python
+
+    >>> from onto2wiki.web_client import Onto2WikiClient
+    >>> client = Onto2WikiClient(dotenv_path="config.env")
+    >>> client("ontology.ttl", "Main_Page")
+
+**Workflow:**
+
 1. Authentication using provided credentials
 2. Ontology parsing with configurable parser
-3. Content synchronization (remove old -> create new pages)
+3. Content synchronization (remove old → create new pages)
 4. Hierarchy generation and main page updates
 
-Note: Requires valid .env configuration with:
-- URL_API: Wiki API endpoint
-- LOGIN/PASSWORD: Authentication credentials (if needed)
-- CSRFToken: Cross-site request forgery token
+**Note:** Requires valid .env configuration with:
+
+- ``URL_API``: Wiki API endpoint
+- ``LOGIN``/``PASSWORD``: Authentication credentials (if needed)
+- ``CSRFToken``: Cross-site request forgery token
 """
 import logging
 import os
@@ -54,51 +59,50 @@ class Onto2WikiClient(Session):
     Provides functionality for managing pages, processing ontologies,
     and automating content generation. Inherits from `requests.Session` to maintain session state.
 
-    Parameters:
-    - dotenv_path (str): Path to the .env configuration file (default: ".env").
-    - parser (BaseParser): Parser for ontology processing (default: `TTLParser`).
+    :param str dotenv_path: Path to the .env configuration file (default: ".env")
+    :param BaseParser parser: Parser for ontology processing (default: `TTLParser`)
     """
 
     @property
     def parser(self):
-        """Current ontology parser instance (subclass of `BaseParser`)."""
+        """Current ontology parser instance.
+
+        :type: BaseParser
+        """
         return self.__parser
 
     @parser.setter
     def parser(self, value):
         """Set the ontology parser.
 
-        Args:
-        - value: Instance of a class inheriting from `BaseParser`.
-
-        Raises:
-        - TypeError: If an invalid parser type is provided.
+        :param BaseParser value: Parser instance
+        :raises TypeError: If invalid parser type is provided
         """
         if not isinstance(value, BaseParser):
-            raise TypeError()
+            raise TypeError("Parser must be subclass of BaseParser")
         self.__parser = value
 
     @property
     def config(self):
-        """Get the configuration (dictionary loaded from .env)."""
+        """Loaded configuration dictionary.
+
+        :type: dict
+        """
         return self.__config
 
     @config.setter
     def config(self, value):
-        """Update the configuration from a .env file.
+        """Update configuration from .env file.
 
-        Args:
-            value: Path to the .env file.
+        :param str value: Path to the .env file
         """
         self.__config = dotenv_values(value)
 
     def __init__(self, dotenv_path='.env', parser=None):
-        """
-        Initialize the client.
+        """Initialize the client.
 
-        Args:
-        - dotenv_path: Path to the .env configuration file.
-        - parser: Ontology parser (default: `TTLParser`).
+        :param str dotenv_path: Path to the .env configuration file
+        :param BaseParser parser: Ontology parser (default: TTLParser)
         """
         super().__init__()
         self.headers = {
@@ -114,7 +118,7 @@ class Onto2WikiClient(Session):
         )
         file_handler = RotatingFileHandler(
             filename=os.getcwd() + '/' + self.__class__.__name__ + '.log',
-            maxBytes=1024 * 1024,  # 1 MB
+            maxBytes=1024 * 1024,
             backupCount=3,
             encoding='utf-8'
         )
@@ -128,16 +132,14 @@ class Onto2WikiClient(Session):
         self.__config = dotenv_values(dotenv_path)
 
     def login(self):
-        """
-        Authenticate with the wiki using credentials from the configuration.
+        """Authenticate with the wiki using credentials from configuration.
 
         Uses:
-        - `LOGIN`: Username from the config.
-        - `PASSWORD`: Password from the config.
+        - ``LOGIN``: Username from config
+        - ``PASSWORD``: Password from config
 
-        Raises:
-        - `LoginException`: On authentication failure.
-        - `Exception`: On network/API errors.
+        :raises LoginException: On authentication failure
+        :raises Exception: On network/API errors
         """
         params = {
             'action': 'query',
@@ -181,17 +183,14 @@ class Onto2WikiClient(Session):
             raise LoginException('Unspecified login or password.')
 
     def get_hierarchy_page(self, pages, me, visited, i):
-        """
-        Recursively generate wiki-formatted hierarchy text.
+        """Recursively generate wiki-formatted hierarchy text.
 
-        Args:
-        - pages: Dictionary of pages.
-        - me: Current page name.
-        - visited: List of visited pages.
-        - i: Nesting level.
-
-        Returns:
-        - str: Hierarchy text in wiki markup.
+        :param dict pages: Dictionary of pages
+        :param str me: Current page name
+        :param list visited: List of visited pages
+        :param int i: Nesting level
+        :return: Hierarchy text in wiki markup
+        :rtype: str
         """
         text = f'{"*" * i} [[{" ".join(me.split("_"))}]]\n'
         visited.append(me)
@@ -201,13 +200,11 @@ class Onto2WikiClient(Session):
         return text
 
     def add_hierarchy_page(self, postfix: str, pages, roots):
-        """
-        Create hierarchy pages for root elements.
+        """Create hierarchy pages for root elements.
 
-        Args:
-        - postfix: Suffix for page titles (e.g., ".Hierarchy").
-        - pages: Dictionary of pages.
-        - roots: Root elements of the hierarchy.
+        :param str postfix: Suffix for page titles (e.g., ".Hierarchy")
+        :param dict pages: Dictionary of pages
+        :param list roots: Root elements of the hierarchy
         """
         for root in roots:
             me = root
@@ -232,12 +229,8 @@ class Onto2WikiClient(Session):
     def delete_hierarchy_page(self, postfix: str, roots):
         """Delete hierarchy pages associated with root elements.
 
-        Iterates through root elements and attempts to delete corresponding wiki pages
-        with formatted titles. Pages are named using root elements combined with postfix.
-
-        Args:
-            postfix (str): Suffix to append to root names for page titles
-            roots (Iterable): Collection of root page names to process
+        :param str postfix: Suffix to append to root names
+        :param Iterable roots: Collection of root page names
         """
         for root in roots:
             params = {
@@ -255,13 +248,16 @@ class Onto2WikiClient(Session):
                 self.__logger.debug(f'Deleted page {params["title"]}')
 
     def add_new_page(self, page) -> bool:
-        """Create a new page and its related sections (children/parent).
+        """Create new page with related sections.
 
-        Args:
-        - page: Dictionary containing page data (title, text, children, parent).
+        :param dict page: Dictionary with page data containing:
 
-        Returns:
-        - bool: True if the page was created successfully.
+            - title (str): Page title
+            - text (str): Page content
+            - children (list): Optional child pages
+            - parent (str): Optional parent page
+        :return: True if page was created successfully
+        :rtype: bool
         """
         added_flag = False
         text = page.get('text', '')
@@ -320,11 +316,9 @@ class Onto2WikiClient(Session):
         return added_flag
 
     def dell_page(self, page):
-        """
-        Delete a page.
+        """Delete wiki page.
 
-        Args:
-        - page: Dictionary containing the page title.
+        :param dict page: Dictionary containing page title
         """
         params = {
             'action': 'delete',
@@ -340,13 +334,11 @@ class Onto2WikiClient(Session):
             self.__logger.debug(f'Deleted page {params["title"]}')
 
     def modify_main_page(self, main_page: str, roots: list, postfix: str) -> None:
-        """
-        Update the main page with new hierarchy sections.
+        """Update main page with new hierarchy sections.
 
-        Args:
-        - main_page: Name of the main page.
-        - roots: Root elements to display.
-        - postfix: Suffix for section titles.
+        :param str main_page: Name of main page
+        :param list roots: Root elements to display
+        :param str postfix: Suffix for section titles
         """
         parse_params = {
             'action': 'parse',
@@ -386,18 +378,17 @@ class Onto2WikiClient(Session):
                 raise Exception('Find more then 1 section named ' + root + prefix)
 
     def __call__(self, ontology_path: str, main_page: str, **kwargs) -> None:
-        """Execute the full workflow.
+        """Execute full workflow.
 
-        Workflow:
+        Workflow steps:
         1. Authenticate
         2. Delete old pages
         3. Create new pages
         4. Generate hierarchies
-        5. Update the main page
+        5. Update main page
 
-        Args:
-        - ontology_path: Path to the ontology file.
-        - main_page: Name of the main page.
+        :param str ontology_path: Path to ontology file
+        :param str main_page: Name of main page
         """
         self.login()
         pages = self.parser(ontology_path, **kwargs)

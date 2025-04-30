@@ -12,3 +12,21 @@ per-file-ignores = [
     "onto2wiki/exceptions.py: D100 D101",
     "onto2wiki/utils.py: D100"
 ]
+
+
+[project]
+name = "onto2wiki"
+version = "1.0.0"
+authors = [
+    {name = "Mogilenetc V.M.", email = "your@email.com"}
+]
+description = "Ontology to Wiki client"
+readme = "README.md"
+requires-python = ">=3.8"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["onto2wiki"]
