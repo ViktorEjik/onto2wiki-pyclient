@@ -1,6 +1,9 @@
-import pytest
 from unittest.mock import Mock
+
 from onto2wiki.web_client import Onto2WikiClient
+
+import pytest
+
 
 @pytest.fixture
 def unregistered_client():
@@ -13,13 +16,12 @@ def unregistered_client():
 
     return client
 
+
 def test_login_headers_and_params(unregistered_client, mocker):
-    
-    # Мокаем методы запросов
+
     mock_get = mocker.patch('requests.Session.get')
     mock_post = mocker.patch('requests.Session.post')
 
-    # Настраиваем моки для двух GET-запросов
     mock_get.side_effect = [
         Mock(json=lambda: {'query': {'tokens': {'logintoken': 'test_token'}}}),
         Mock(json=lambda: {'query': {'tokens': {'csrftoken': 'csrf_token'}}})
@@ -28,13 +30,10 @@ def test_login_headers_and_params(unregistered_client, mocker):
         json=lambda: {'login': {'result': 'Success', 'lgusername': 'testuser'}}
     )
 
-    # Вызываем тестируемый метод
     unregistered_client.login()
 
-    # Проверяем количество вызовов GET
     assert mock_get.call_count == 2
 
-    # Проверяем первый GET (получение logintoken)
     first_get_args = mock_get.call_args_list[0]
     assert first_get_args[1]['params'] == {
         'action': 'query',
@@ -43,7 +42,6 @@ def test_login_headers_and_params(unregistered_client, mocker):
         'format': 'json'
     }
 
-    # Проверяем второй GET (обновление токенов после логина)
     second_get_args = mock_get.call_args_list[1]
     assert second_get_args[1]['params'] == {
         'action': 'query',
@@ -52,7 +50,6 @@ def test_login_headers_and_params(unregistered_client, mocker):
         'format': 'json'
     }
 
-    # Проверяем POST запрос для входа
     mock_post.assert_called_once_with(
         'https://wiki.example.org/api.php',
         data={

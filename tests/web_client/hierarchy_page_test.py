@@ -1,6 +1,9 @@
-import pytest
 from unittest.mock import Mock
+
 from onto2wiki.web_client import Onto2WikiClient
+
+import pytest
+
 import requests
 
 
@@ -18,8 +21,7 @@ def login_client():
 
 
 def test_add_hierarchy_page_success(login_client, mocker):
-    
-    # Мокаем зависимость
+
     mock_post = mocker.patch('requests.Session.post')
     mock_post.return_value = Mock(
         json=lambda: {'edit': {'result': 'Success'}},
@@ -33,10 +35,8 @@ def test_add_hierarchy_page_success(login_client, mocker):
     }
     test_roots = ['RootPage']
 
-    # Вызываем тестируемый метод
     login_client.add_hierarchy_page('.Hierarchy', test_pages, test_roots)
 
-    # Проверяем параметры запроса
     expected_data = {
         'action': 'edit',
         'format': 'json',
@@ -55,7 +55,7 @@ def test_add_hierarchy_page_success(login_client, mocker):
 
 
 def test_multiple_roots_processing(login_client, mocker):
-    
+
     mock_post = mocker.patch('requests.Session.post')
     mock_post.return_value = Mock(json=lambda: {'edit': {'result': 'Success'}})
 
@@ -81,8 +81,8 @@ def test_multiple_roots_processing(login_client, mocker):
     ('Another_Example', 'Another Example.Hierarchy'),
     ('NoSpacesHere', 'NoSpacesHere.Hierarchy')
 ])
-def test_title_generation(login_client, mocker, input_title, expected):
-    
+def test_title_generation_add(login_client, mocker, input_title, expected):
+
     mocker.patch('requests.Session.post')
 
     login_client.add_hierarchy_page('.Hierarchy', {input_title: {}}, [input_title])
@@ -92,7 +92,7 @@ def test_title_generation(login_client, mocker, input_title, expected):
 
 
 def test_delete_hierarchy_page_success(login_client, mocker):
-    
+
     mock_post = mocker.patch('requests.Session.post')
     mock_post.return_value = Mock(json=lambda: {}, status_code=200)
 
@@ -130,7 +130,7 @@ def test_delete_hierarchy_page_success(login_client, mocker):
 
 
 def test_delete_hierarchy_page_error(login_client, mocker):
-    
+
     mock_post = mocker.patch('requests.Session.post')
     mock_post.return_value = Mock(
         json=lambda: {'error': {'code': 'missingtitle', 'info': 'Page does not exist'}},
@@ -145,8 +145,8 @@ def test_delete_hierarchy_page_error(login_client, mocker):
     ('Snake_Case_Example', '_test', 'Snake Case Example_test'),
     ('NoSpaces', '', 'NoSpaces')
 ])
-def test_title_generation(login_client, mocker, input_title, postfix, expected):
-    
+def test_title_generation_delete(login_client, mocker, input_title, postfix, expected):
+
     mock_post = mocker.patch('requests.Session.post')
 
     login_client.delete_hierarchy_page(postfix, [input_title])
@@ -156,7 +156,7 @@ def test_title_generation(login_client, mocker, input_title, postfix, expected):
 
 
 def test_empty_roots(login_client, mocker):
-    
+
     mock_post = mocker.patch('requests.Session.post')
 
     login_client.delete_hierarchy_page('.Hierarchy', [])

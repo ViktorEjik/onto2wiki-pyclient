@@ -1,6 +1,8 @@
-import pytest
 from unittest.mock import Mock
+
 from onto2wiki.web_client import Onto2WikiClient
+
+import pytest
 
 
 @pytest.fixture
@@ -17,7 +19,7 @@ def login_client():
 
 
 def test_modify_main_page_success(login_client, mocker):
-    
+
     mock_post = mocker.patch('requests.Session.post')
     mock_post.return_value = Mock(
         json=lambda: {'parse': {'sections': [{'line': 'Existing Section'}]}},
@@ -27,7 +29,6 @@ def test_modify_main_page_success(login_client, mocker):
     test_roots = ['New_Section']
     login_client.modify_main_page('Main_Page', test_roots, '.Hierarchy')
 
-    # Проверяем добавление нового раздела
     expected_data = {
         'action': 'edit',
         'format': 'json',
@@ -58,7 +59,7 @@ def test_modify_main_page_success(login_client, mocker):
 
 
 def test_modify_existing_section(login_client, mocker):
-    
+
     mock_post = mocker.patch('requests.Session.post')
     mock_post.return_value = Mock(
         json=lambda: {'parse': {'sections': [{'line': 'Existing Section.Hierarchy'}]}},
@@ -68,7 +69,7 @@ def test_modify_existing_section(login_client, mocker):
     login_client.modify_main_page('Main_Page', ['Existing_Section'], '.Hierarchy')
     mock_post.assert_called_once_with(
         url=login_client.config['URL_API'],
-        data= {
+        data={
             'action': 'parse',
             'format': 'json',
             'page': 'Main_Page',
@@ -79,7 +80,7 @@ def test_modify_existing_section(login_client, mocker):
 
 
 def test_modify_main_page_error_handling(login_client, mocker, caplog):
-    
+
     mock_post = mocker.patch('requests.Session.post')
     mock_post.return_value = Mock(
         json=lambda: {'error': {'code': 'missingtitle', 'info': 'Page not found'}},
@@ -96,7 +97,7 @@ def test_modify_main_page_error_handling(login_client, mocker, caplog):
     ('NoPostfix', '', '== [[NoPostfix]] ==')
 ])
 def test_section_generation(login_client, mocker, input_root, postfix, expected):
-    
+
     mock_post = mocker.patch('requests.Session.post')
     mock_post.return_value = Mock(json=lambda: {'parse': {'sections': []}})
 
@@ -106,7 +107,7 @@ def test_section_generation(login_client, mocker, input_root, postfix, expected)
 
 
 def test_multiple_sections_handling(login_client, mocker):
-    
+
     mock_post = mocker.patch('requests.Session.post')
     mock_post.return_value = Mock(
         json=lambda: {'parse': {'sections': [
@@ -122,7 +123,7 @@ def test_multiple_sections_handling(login_client, mocker):
 
 
 def test_empty_roots_handling(login_client, mocker):
-    
+
     mock_post = mocker.patch('requests.Session.post')
 
     login_client.modify_main_page('Main_Page', [], '.Hierarchy')

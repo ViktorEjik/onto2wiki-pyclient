@@ -1,6 +1,8 @@
-import pytest
 from unittest.mock import Mock
+
 from onto2wiki.web_client import Onto2WikiClient
+
+import pytest
 
 
 @pytest.fixture
@@ -15,8 +17,9 @@ def login_client():
 
     return client
 
+
 def test_add_new_page_success(login_client, mocker):
-    
+
     mock_post = mocker.patch('requests.Session.post')
     mock_post.return_value = Mock(json=lambda: {'edit': {'result': 'Success'}})
 
@@ -47,7 +50,7 @@ def test_add_new_page_success(login_client, mocker):
 
 
 def test_add_new_page_with_children(login_client, mocker):
-    
+
     mock_post = mocker.patch('requests.Session.post')
     mock_post.return_value = Mock(json=lambda: {'edit': {'result': 'Success'}})
 
@@ -79,7 +82,7 @@ def test_add_new_page_with_children(login_client, mocker):
 
 
 def test_add_new_page_with_parent(login_client, mocker):
-    
+
     mock_post = mocker.patch('requests.Session.post')
     mock_post.return_value = Mock(json=lambda: {'edit': {'result': 'Success'}})
 
@@ -110,7 +113,7 @@ def test_add_new_page_with_parent(login_client, mocker):
 
 
 def test_add_new_page_error_handling(login_client, mocker):
-    
+
     mock_post = mocker.patch('requests.Session.post')
     mock_post.return_value = Mock(
         json=lambda: {'error': {'code': 'protectedpage', 'info': 'Page is protected'}},
@@ -125,7 +128,7 @@ def test_add_new_page_error_handling(login_client, mocker):
 
 
 def test_dell_page_success(login_client, mocker):
-    
+
     mock_post = mocker.patch('requests.Session.post')
     mock_post.return_value = Mock(json=lambda: {}, status_code=200)
 
@@ -149,7 +152,7 @@ def test_dell_page_success(login_client, mocker):
 
 
 def test_empty_page_handling(login_client, mocker):
-    
+
     mock_post = mocker.patch('requests.Session.post')
 
     login_client.dell_page({})

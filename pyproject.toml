@@ -10,7 +10,8 @@ exclude = [
 per-file-ignores = [
     "onto2wiki/__main__.py: D100",
     "onto2wiki/exceptions.py: D100 D101",
-    "onto2wiki/utils.py: D100"
+    "onto2wiki/utils.py: D100",
+    "tests/*.py: D B017"
 ]
 
 [pytest]
