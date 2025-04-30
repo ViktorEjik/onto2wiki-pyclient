@@ -203,3 +203,6 @@ class TTLParser(BaseParser):
             raise AttributeError('Namespace must be specified')
 
         return self.__parser_ttl(self.__rename_classes(path, namespace))
+
+
+__all__ = ['BaseParser', 'TTLParser']

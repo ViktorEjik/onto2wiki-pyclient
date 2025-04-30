@@ -5,7 +5,10 @@ exclude = [
     ".git",
     "__pycache__",
     ".venv",
-    "migrations",
-    "tmp.py",
-    "exceptions.py"
+    "migrations"
+]
+per-file-ignores = [
+    "onto2wiki/__main__.py: D100",
+    "onto2wiki/exceptions.py: D100 D101",
+    "onto2wiki/utils.py: D100"
 ]

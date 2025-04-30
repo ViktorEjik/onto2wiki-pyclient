@@ -37,16 +37,15 @@ Note: Requires valid .env configuration with:
 import logging
 import os
 from logging.handlers import RotatingFileHandler
-from parser import BaseParser, TTLParser
 from sys import prefix
 
 from dotenv import dotenv_values
 
-from exceptions import LoginException
-
 from requests import Session
 
-from utils import find_roots
+from .exceptions import LoginException
+from .parser import BaseParser, TTLParser
+from .utils import find_roots
 
 
 class Onto2WikiClient(Session):

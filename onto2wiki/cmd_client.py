@@ -32,15 +32,14 @@ Example Session:
 import cmd
 import shlex
 from importlib import import_module
-from parser import TTLParser
+
+from colorama import Fore, Style
 
 from tqdm import tqdm
 
-from utils import find_roots
-
-from web_client import Onto2WikiClient
-
-from colorama import Fore, Style
+from .parser import TTLParser
+from .utils import find_roots
+from .web_client import Onto2WikiClient
 
 
 class CMDClient(cmd.Cmd):
@@ -208,7 +207,3 @@ class CMDClient(cmd.Cmd):
     def do_exit(arg):
         """Exit the application"""
         return True
-
-
-if __name__ == '__main__':
-    CMDClient().cmdloop()
