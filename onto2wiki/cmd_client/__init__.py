@@ -35,11 +35,11 @@ from importlib import import_module
 
 from colorama import Fore, Style
 
-from tqdm import tqdm
-
 from onto2wiki.parser import TTLParser
 from onto2wiki.utils import find_roots
 from onto2wiki.web_client import Onto2WikiClient
+
+from tqdm import tqdm
 
 
 class CMDClient(cmd.Cmd):
@@ -207,6 +207,7 @@ class CMDClient(cmd.Cmd):
     def do_exit(arg):
         """Exit the application"""
         return True
+
 
 __all__ = [
     'CMDClient'
