@@ -1,3 +1,21 @@
+
+[project]
+name = "onto2wiki"
+version = "1.0.0"
+authors = [
+    {name = "Mogilenetc V.M.", email = "your@email.com"}
+]
+description = "Ontology to Wiki client"
+readme = "README.md"
+requires-python = ">=3.8"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["onto2wiki"]
+
 [tool.flake8]
 ignore = ["ANN", "D400"]
 max-line-length = 120
@@ -10,6 +28,7 @@ exclude = [
 per-file-ignores = [
     "onto2wiki/__main__.py: D100",
     "onto2wiki/exceptions.py: D100 D101",
+
     "onto2wiki/utils.py: D100",
     "tests/*.py: D B017"
 ]
@@ -19,3 +38,6 @@ testpaths = "tests"  # Где искать тесты
 python_files = "*_test.py"  # Шаблон названий файлов
 python_classes = "Test*"  # Шаблон названий классов
 python_functions = "test_*"  # Шаблон названий функций
+
+    "onto2wiki/utils.py: D100"
+]
