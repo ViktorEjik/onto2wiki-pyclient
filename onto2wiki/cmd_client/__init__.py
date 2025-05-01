@@ -207,3 +207,7 @@ class CMDClient(cmd.Cmd):
     def do_exit(arg):
         """Exit the application"""
         return True
+
+__all__ = [
+    'CMDClient'
+]

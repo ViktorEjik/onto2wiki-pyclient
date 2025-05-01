@@ -38,14 +38,3 @@ and configuration management.
 4. Process and upload content
 5. Generate navigation hierarchies
 """
-from onto2wiki.exceptions import LoginException
-from onto2wiki.parser import BaseParser, TTLParser
-from onto2wiki.web_client import Onto2WikiClient
-
-
-__all__ = [
-    'Onto2WikiClient',
-    'LoginException',
-    'BaseParser',
-    'TTLParser'
-]
