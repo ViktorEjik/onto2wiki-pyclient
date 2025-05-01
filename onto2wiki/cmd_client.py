@@ -37,9 +37,9 @@ from colorama import Fore, Style
 
 from tqdm import tqdm
 
-from .parser import TTLParser
-from .utils import find_roots
-from .web_client import Onto2WikiClient
+from onto2wiki.parser import TTLParser
+from onto2wiki.utils import find_roots
+from onto2wiki.web_client import Onto2WikiClient
 
 
 class CMDClient(cmd.Cmd):

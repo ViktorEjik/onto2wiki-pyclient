@@ -8,6 +8,8 @@
 
 ## 📦 Установка  
 ```bash
+
+pip install pipenv
 # Клонируйте репозиторий (пример)
 git clone https://github.com/yourname/onto2wiki.git
 cd onto2wiki
