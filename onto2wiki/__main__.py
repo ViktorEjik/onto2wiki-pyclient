@@ -1,4 +1,4 @@
-from .cmd_client import CMDClient
+from onto2wiki.cmd_client import CMDClient
 
 
 if __name__ == '__main__':

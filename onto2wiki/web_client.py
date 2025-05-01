@@ -48,9 +48,9 @@ from dotenv import dotenv_values
 
 from requests import Session
 
-from .exceptions import LoginException
-from .parser import BaseParser, TTLParser
-from .utils import find_roots
+from onto2wiki.exceptions import LoginException
+from onto2wiki.parser import BaseParser, TTLParser
+from onto2wiki.utils import find_roots
 
 
 class Onto2WikiClient(Session):
@@ -79,7 +79,7 @@ class Onto2WikiClient(Session):
         :raises TypeError: If invalid parser type is provided
         """
         if not isinstance(value, BaseParser):
-            raise TypeError("Parser must be subclass of BaseParser")
+            raise TypeError('Parser must be subclass of BaseParser')
         self.__parser = value
 
     @property

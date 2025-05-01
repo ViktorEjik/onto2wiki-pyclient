@@ -24,8 +24,7 @@ pytest-mock = "*"
 sphinx = "*"
 sphinx-rtd-theme = "*"
 sphinx-autodoc-typehints = "*"
-onto2wiki = {file = "."}
-
+build = "*"
 
 [requires]
 python_version = "3.13"
