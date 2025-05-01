@@ -59,8 +59,8 @@ class CMDClient(cmd.Cmd):
         """
         super().__init__()
         self.client = Onto2WikiClient()
-        self.curr_parser = TTLParser()
-        self.parsers = {}
+        self.parsers = {TTLParser.__name__: TTLParser()}
+        self.curr_parser = self.parsers[TTLParser.__name__]
         self.pages = {}
         self.roots = []
 
