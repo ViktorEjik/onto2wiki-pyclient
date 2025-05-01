@@ -400,3 +400,7 @@ class Onto2WikiClient(Session):
         roots = find_roots(pages)
         self.add_hierarchy_page('. Иерархия тем', pages, roots)
         self.modify_main_page(main_page, roots, '. Иерархия тем')
+
+__all__ = [
+    'Onto2WikiClient'
+]

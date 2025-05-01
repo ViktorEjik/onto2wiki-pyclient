@@ -1,7 +1,7 @@
 
 [project]
 name = "onto2wiki"
-version = "1.0.0"
+version = "0.1.0"
 authors = [
     {name = "Mogilenetc V.M.", email = "your@email.com"}
 ]
@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "requests",
-    "dotenv",
+    "python-dotenv",
     "tqdm",
     "colorama"
 ]
@@ -20,7 +20,14 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
-packages = ["onto2wiki"]
+packages = [
+    'onto2wiki',
+    'onto2wiki.exceptions',
+    'onto2wiki.parser',
+    'onto2wiki.utils',
+    'onto2wiki.cmd_client',
+    'onto2wiki.web_client'
+]
 
 [tool.flake8]
 ignore = ["ANN", "D400"]
