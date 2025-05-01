@@ -7,6 +7,7 @@ name = "pypi"
 requests = "*"
 dotenv = "*"
 tqdm = "*"
+colorama = "*"
 
 [dev-packages]
 flake8-docstrings = "*"
@@ -18,6 +19,10 @@ flake8-comprehensions = "*"
 flake8 = "*"
 flake8-pyproject = "*"
 isort = "*"
+sphinx = "*"
+sphinx-rtd-theme = "*"
+sphinx-autodoc-typehints = "*"
+onto2wiki = {file = "."}
 
 [requires]
 python_version = "3.13"
