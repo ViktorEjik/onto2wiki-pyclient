@@ -46,11 +46,11 @@ from sys import prefix
 
 from dotenv import dotenv_values
 
-from requests import Session
-
 from onto2wiki.exceptions import LoginException
 from onto2wiki.parser import BaseParser, TTLParser
 from onto2wiki.utils import find_roots
+
+from requests import Session
 
 
 class Onto2WikiClient(Session):
@@ -402,6 +402,7 @@ class Onto2WikiClient(Session):
         roots = find_roots(pages)
         self.add_hierarchy_page('. Иерархия тем', pages, roots)
         self.modify_main_page(main_page, roots, '. Иерархия тем')
+
 
 __all__ = [
     'Onto2WikiClient'

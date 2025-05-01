@@ -1,4 +1,3 @@
-
 [project]
 name = "onto2wiki"
 version = "0.1.0"
@@ -40,10 +39,10 @@ exclude = [
 ]
 per-file-ignores = [
     "onto2wiki/__main__.py: D100",
-    "onto2wiki/exceptions.py: D100 D101",
-    "onto2wiki/utils.py: D100",
-    "onto2wiki/utils.py: D100",
-    "tests/*.py: D B017"
+    "onto2wiki/exceptions/__init__.py: D101 D104",
+    "onto2wiki/parser/__init__.py: D301",
+    "onto2wiki/utils/__init__.py: D104",
+    "onto2wiki/tests/*.py: D B017"
 ]
 
 [pytest]
