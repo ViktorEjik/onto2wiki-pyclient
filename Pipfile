@@ -26,6 +26,7 @@ sphinx-rtd-theme = "*"
 sphinx-autodoc-typehints = "*"
 build = "*"
 setuptools = "*"
+doit = "*"
 
 [requires]
 python_version = "3.13"
