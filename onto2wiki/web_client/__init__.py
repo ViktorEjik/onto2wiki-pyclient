@@ -135,6 +135,7 @@ class Onto2WikiClient(Session):
         """Authenticate with the wiki using credentials from configuration.
 
         Uses:
+
         - ``LOGIN``: Username from config
         - ``PASSWORD``: Password from config
 
@@ -383,11 +384,12 @@ class Onto2WikiClient(Session):
         """Execute full workflow.
 
         Workflow steps:
-        1. Authenticate
-        2. Delete old pages
-        3. Create new pages
-        4. Generate hierarchies
-        5. Update main page
+
+            1. Authenticate
+            2. Delete old pages
+            3. Create new pages
+            4. Generate hierarchies
+            5. Update main page
 
         :param str ontology_path: Path to ontology file
         :param str main_page: Name of main page

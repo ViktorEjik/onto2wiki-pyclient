@@ -6,8 +6,7 @@ API Reference
 
    web_client
 
-.. automodule:: onto2wiki
-   :members:
-   :show-inheritance:
+   parser
+
 
 

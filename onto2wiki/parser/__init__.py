@@ -2,16 +2,19 @@
 Ontology parser module for Turtle (TTL) format files.
 
 Provides functionality for parsing and normalizing ontology files with:
+
 - Namespace management
 - Class hierarchy generation
 - Syntax normalization
 - Cross-referencing between classes
 
 Key Components:
+
 1. BaseParser: Abstract base class for parser implementations
 2. TTLParser: Concrete implementation for Turtle format processing
 
 Features:
+
 - Automatic namespace injection for class URIs
 - Parent-child relationship detection
 - Multi-language label support
@@ -19,29 +22,36 @@ Features:
 - Output generation of modified TTL files
 
 Typical Workflow:
+
 1. Normalize class URIs with specified namespace
 2. Generate modified TTL file with full URIs
 3. Parse normalized file into hierarchical structure
 4. Build parent-child relationships map
 
 Dependencies:
+
 - pathlib: Path handling
 - re: Regular expression matching
 
 File Operations:
-- Creates *_pretty.ttl files with normalized syntax
+
+- Creates \\*_pretty.ttl files with normalized syntax
 - Maintains original file encoding (UTF-8 assumed)
 
 Data Structures:
+
 - Returns nested dictionaries with format:
+.. code-block:: python
+
     {
-        'ClassName': {
+        'PageName': {
             'title': str,
             'parent': Optional[str],
             'children': Optional[List[str]],
-            'label@{lang}': str
+            'label\\@{lang}': str
         }
     }
+
 """
 import pathlib
 import re
@@ -146,7 +156,7 @@ class TTLParser(BaseParser):
                     - title: Class name
                     - parent: Parent class name (optional)
                     - children: List of child classes (optional)
-                    - label@{lang}: Localized labels (optional)
+                    - label\\@{lang}: Localized labels (optional)
 
         Raises:
             Exception: For unsupported syntax patterns

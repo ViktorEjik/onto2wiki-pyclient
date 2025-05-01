@@ -8,7 +8,7 @@
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath('..'))
+sys.path.insert(0, os.path.abspath('../..'))
 
 project = 'onto2wiki-pyclient'
 copyright = '2025, Mogilenetc V.M. Boguslavskaya A.A.'
