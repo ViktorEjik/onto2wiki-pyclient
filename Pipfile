@@ -19,10 +19,13 @@ flake8-comprehensions = "*"
 flake8 = "*"
 flake8-pyproject = "*"
 isort = "*"
+pytest = "*"
+pytest-mock = "*"
 sphinx = "*"
 sphinx-rtd-theme = "*"
 sphinx-autodoc-typehints = "*"
 onto2wiki = {file = "."}
+
 
 [requires]
 python_version = "3.13"

@@ -211,6 +211,7 @@ class Onto2WikiClient(Session):
             visited = ['']
             i = 1
             text = self.get_hierarchy_page(pages, me, visited, i)
+
             params = {
                 'action': 'edit',
                 'format': 'json',
@@ -265,7 +266,7 @@ class Onto2WikiClient(Session):
             'action': 'edit',
             'format': 'json',
             'title': page['title'],
-            'text': text + 'Данная страница сгенерирована ботом, её необходимо заполнить.',
+            'text': text + ' Данная страница сгенерирована ботом, её необходимо заполнить.',
             'bot': 1,
             'token': self.config['csrftoken'],
             'formatversion': '2'
@@ -320,18 +321,19 @@ class Onto2WikiClient(Session):
 
         :param dict page: Dictionary containing page title
         """
-        params = {
-            'action': 'delete',
-            'format': 'json',
-            'title': page['title'],
-            'token': self.config['csrftoken'],
-            'formatversion': '2'
-        }
-        req = self.post(url=self.config['URL_API'], data=params, headers=self.headers).json()
-        if 'error' in req:
-            self.__logger.error(f'Can`t delete page {params["title"]}: {req["error"]["info"]}')
-        else:
-            self.__logger.debug(f'Deleted page {params["title"]}')
+        if page:
+            params = {
+                'action': 'delete',
+                'format': 'json',
+                'title': page['title'],
+                'token': self.config['csrftoken'],
+                'formatversion': '2'
+            }
+            req = self.post(url=self.config['URL_API'], data=params, headers=self.headers).json()
+            if 'error' in req:
+                self.__logger.error(f'Can`t delete page {params["title"]}: {req["error"]["info"]}')
+            else:
+                self.__logger.debug(f'Deleted page {params["title"]}')
 
     def modify_main_page(self, main_page: str, roots: list, postfix: str) -> None:
         """Update main page with new hierarchy sections.
